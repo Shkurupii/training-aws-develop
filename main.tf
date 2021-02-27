@@ -41,12 +41,6 @@ variable "domain_name" {
   description = "Domain Name"
 }
 
-resource "aws_s3_bucket" "test-bucket" {
-  provider = aws.develop
-  force_destroy = true
-  bucket = var.bucket_name
-}
-
 resource "aws_s3_bucket" "dev-bucket" {
   provider = aws.develop
   force_destroy = true
