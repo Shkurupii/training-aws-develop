@@ -1,3 +1,9 @@
+terraform {
+  required_version = "0.14.5"
+  # terraform init -backend-config=backend.hcl
+  backend "remote" {}
+}
+
 provider "aws" {
 }
 
