@@ -5,7 +5,6 @@ terraform {
 }
 
 provider "aws" {
-  alias = "develop"
   assume_role {
     role_arn = var.assume_role_arn
   }
@@ -42,7 +41,6 @@ variable "domain_name" {
 }
 
 resource "aws_s3_bucket" "dev-bucket" {
-  provider = aws.develop
   force_destroy = true
   bucket_prefix = "${var.workspace}-bucket-"
   tags = module.tags.all_tags

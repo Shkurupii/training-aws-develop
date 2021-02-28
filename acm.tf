@@ -1,13 +1,9 @@
 data "aws_route53_zone" "public" {
-  provider = aws.develop
   name = var.domain_name
   private_zone = false
 }
 
 module "acm" {
-  providers = {
-    aws = aws.develop
-  }
   source = "terraform-aws-modules/acm/aws"
   version = "2.12.0"
   create_certificate = true

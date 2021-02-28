@@ -1,6 +1,5 @@
 // Custom VPC
 data "aws_availability_zones" "available" {
-  provider = aws.develop
   state = "available"
 }
 
@@ -14,7 +13,6 @@ locals {
 
 //https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 resource "aws_vpc" "develop_vpc" {
-  provider = aws.develop
   //  https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html
   cidr_block = var.vpc_cidr
   //  https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html
@@ -27,7 +25,6 @@ resource "aws_vpc" "develop_vpc" {
 //https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
 //https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-subnet-basics
 resource "aws_subnet" "public_subnet" {
-  provider = aws.develop
   count = length(local.public_subnets_cidrs)
   cidr_block = local.public_subnets_cidrs[count.index]
   vpc_id = aws_vpc.develop_vpc.id
@@ -39,7 +36,6 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_subnet" "private_subnet" {
-  provider = aws.develop
   count = length(local.private_subnets_cidrs)
   cidr_block = local.private_subnets_cidrs[count.index]
   vpc_id = aws_vpc.develop_vpc.id
@@ -53,7 +49,6 @@ resource "aws_subnet" "private_subnet" {
 //https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table
 //https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html
 resource "aws_route_table" "public_route_table" {
-  provider = aws.develop
   vpc_id = aws_vpc.develop_vpc.id
   tags = {
     Name = "public-route-table"
@@ -61,7 +56,6 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  provider = aws.develop
   vpc_id = aws_vpc.develop_vpc.id
   tags = {
     Name = "private-route-table"
@@ -72,14 +66,12 @@ resource "aws_route_table" "private_route_table" {
 //https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html#route-table-assocation
 //https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association
 resource "aws_route_table_association" "public_route_association" {
-  provider = aws.develop
   count = length(local.public_subnets_cidrs)
   route_table_id = aws_route_table.public_route_table.id
   subnet_id = aws_subnet.public_subnet[count.index].id
 }
 
 resource "aws_route_table_association" "private_route_association" {
-  provider = aws.develop
   count = length(local.private_subnets_cidrs)
   route_table_id = aws_route_table.private_route_table.id
   subnet_id = aws_subnet.private_subnet[count.index].id
@@ -87,7 +79,6 @@ resource "aws_route_table_association" "private_route_association" {
 
 // https://docs.aws.amazon.com/vpc/latest/userguide/vpc-eips.html
 resource "aws_eip" "nat_gw_elastic_ip" {
-  provider = aws.develop
   vpc = true
   associate_with_private_ip = "10.0.0.5"
 
@@ -102,7 +93,6 @@ resource "aws_eip" "nat_gw_elastic_ip" {
 // https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html
 // network address translation
 resource "aws_nat_gateway" "nat_gw" {
-  provider = aws.develop
   allocation_id = aws_eip.nat_gw_elastic_ip.id
   subnet_id = aws_subnet.private_subnet[0].id
 
@@ -116,7 +106,6 @@ resource "aws_nat_gateway" "nat_gw" {
 
 //https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route
 resource "aws_route" "nat_gw_route" {
-  provider = aws.develop
   route_table_id = aws_route_table.private_route_table.id
   nat_gateway_id = aws_nat_gateway.nat_gw.id
   destination_cidr_block = "0.0.0.0/0"
@@ -124,7 +113,6 @@ resource "aws_route" "nat_gw_route" {
 
 //https://medium.com/awesome-cloud/aws-vpc-difference-between-internet-gateway-and-nat-gateway-c9177e710af6
 resource "aws_internet_gateway" "production_igw" {
-  provider = aws.develop
   vpc_id = aws_vpc.develop_vpc.id
   tags = {
     Name = "develop-igw"
@@ -132,7 +120,6 @@ resource "aws_internet_gateway" "production_igw" {
 }
 
 resource "aws_route" "public_internet_igw_route" {
-  provider = aws.develop
   route_table_id = aws_route_table.public_route_table.id
   gateway_id = aws_internet_gateway.production_igw.id
   destination_cidr_block = "0.0.0.0/0"
