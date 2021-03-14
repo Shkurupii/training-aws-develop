@@ -68,7 +68,7 @@ module "ec2" {
   ami                         = data.aws_ami.ubuntu_latest.id
   instance_type               = var.instance_type
   cpu_credits                 = var.cpu_credits
-  subnet_id                   = tolist(data.aws_subnet_ids.default_subtets.ids)[0]
+  subnet_id                   = tolist(data.aws_subnet_ids.default_subnets.ids)[0]
   vpc_security_group_ids      = [data.aws_security_group.default.id]
   associate_public_ip_address = var.associate_public_ip_address
   iam_instance_profile        = aws_iam_instance_profile.iam_instance_profile.name

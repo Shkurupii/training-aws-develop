@@ -45,7 +45,7 @@ module "db" {
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   vpc_security_group_ids = [data.aws_security_group.default.id]
-  subnet_ids             = tolist(data.aws_subnet_ids.default_subtets.ids)
+  subnet_ids             = tolist(data.aws_subnet_ids.default_subnets.ids)
 
   maintenance_window      = var.maintenance_window
   backup_window           = var.backup_window
