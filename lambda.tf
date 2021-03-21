@@ -132,7 +132,7 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
 resource "aws_cloudwatch_event_rule" "lambda_cron" {
   name = "run-lambda-to-check-old-iam-passwords"
   description = "Schedule trigger for run every day at midnight"
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(1 day)"
   role_arn = aws_iam_role.iam_for_cloudwatch.arn
 }
 
