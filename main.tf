@@ -6,13 +6,17 @@ terraform {
 
 provider "aws" {
   assume_role {
-    role_arn = var.assume_role_arn
+    role_arn = "arn:aws:iam::${var.develop_account_id}:role/OrganizationAccountAccessRole"
   }
 }
 
-variable "assume_role_arn" {
+data "aws_region" "current" {}
+
+data "aws_caller_identity" "current" {}
+
+variable "develop_account_id" {
   type = string
-  description = "Assume role ARN"
+  description = "Account ID"
 }
 
 variable "bucket_name" {
